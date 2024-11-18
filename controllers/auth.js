@@ -1,8 +1,9 @@
-// controllers/authController.js
+// controllers/auth.js
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const userModel = require('../models/user');
 const tokenModel = require('../models/token');
+const jwt = require('jsonwebtoken');
+const { expressjwt } = require('express-jwt');
 
 const SECRET_KEY = process.env.SECRET_KEY;
 const TOKEN_EXPIRY = '1h';
@@ -73,8 +74,8 @@ const signIn = async (req, res) => {
       return res.status(400).send('Invalid credentials');
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: TOKEN_EXPIRY });
-    const refreshToken = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: REFRESH_TOKEN_EXPIRY });
+    const token = jwt.sign({ id: user.id }, SECRET_KEY, { expiresIn: TOKEN_EXPIRY });
+    const refreshToken = jwt.sign({ id: user.id }, SECRET_KEY, { expiresIn: REFRESH_TOKEN_EXPIRY });
 
     await tokenModel.createToken({
       userId: user.id,
@@ -154,9 +155,15 @@ const refreshToken = async (req, res) => {
   }
 };
 
+const authenticate = expressjwt({
+  secret: SECRET_KEY,
+  algorithms: ['HS256']
+});
+
 module.exports = {
   signUp,
   signIn,
   signOut,
-  refreshToken
+  refreshToken,
+  authenticate
 };
