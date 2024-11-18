@@ -1,0 +1,49 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Environment variables
+.env
+
+# Coverage directory used by testing tools
+coverage/
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Test reports
+*.test.xml
+
+# Temporary files
+*.tmp
+*.temp
+
+# Build directory
+build/
+
+# Debug logs
+*.log
+
+# Yarn Integrity
+.yarn-integrity
+
+# Optional npm cache directory
+.npm
+
+# Jest
+jest/
+
+# Output of 'npm pack'
+*.tgz
+
+# TypeScript
+*.tsbuildinfo
