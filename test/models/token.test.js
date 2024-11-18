@@ -7,11 +7,10 @@ jest.mock('../../db/connection');
 const mockDb = {
   insert: jest.fn(),
   where: jest.fn(() => {
-    const mockWhere = {
+    return {
       first: jest.fn(),
       del: jest.fn()
     };
-    return mockWhere;
   }),
   del: jest.fn()
 };

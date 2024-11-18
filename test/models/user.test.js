@@ -7,10 +7,9 @@ jest.mock('../../db/connection');
 const mockDbUser = {
   insert: jest.fn(),
   where: jest.fn(() => {
-    const mockWhere = {
+    return {
       first: jest.fn()
     };
-    return mockWhere;
   })
 };
 
