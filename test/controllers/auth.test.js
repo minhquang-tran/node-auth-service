@@ -1,5 +1,5 @@
 //test/controllers/auth.test.js
-const { signUp, signIn, signOut, refreshToken, authenticate } = require('../../controllers/auth');
+const { signUp, signIn, signOut, refreshToken } = require('../../controllers/auth');
 const userModel = require('../../models/user');
 const tokenModel = require('../../models/token');
 const bcrypt = require('bcrypt');
@@ -84,6 +84,14 @@ describe('Auth Controller', () => {
         displayName: 'John Doe',
       });
     });
+
+    it('should return 500 if there is an internal server error', async () => {
+      req.body = { email: 'test@example.com', password: 'password123', firstName: 'John', lastName: 'Doe' };
+      userModel.getUserByEmail.mockRejectedValue(new Error('Database error'));
+      await signUp(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.send).toHaveBeenCalledWith('Internal server error');
+    });
   });
 
   describe('signIn', () => {
@@ -139,6 +147,14 @@ describe('Auth Controller', () => {
         refreshToken: 'refreshToken',
       });
     });
+
+    it('should return 500 if there is an internal server error', async () => {
+      req.body = { email: 'test@example.com', password: 'password123' };
+      userModel.getUserByEmail.mockRejectedValue(new Error('Database error'));
+      await signIn(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.send).toHaveBeenCalledWith('Internal server error');
+    });
   });
 
   describe('signOut', () => {
@@ -166,6 +182,15 @@ describe('Auth Controller', () => {
       expect(res.status).toHaveBeenCalledWith(204);
       expect(res.send).toHaveBeenCalled();
     });
+
+    it('should return 500 if there is an internal server error', async () => {
+      req.headers = { authorization: 'Bearer validToken' };
+      jwt.verify.mockReturnValue({ id: 1 });
+      tokenModel.deleteTokensByUserId.mockRejectedValue(new Error('Database error'));
+      await signOut(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.send).toHaveBeenCalledWith('Internal server error');
+    });
   });
 
   describe('refreshToken', () => {
@@ -191,6 +216,14 @@ describe('Auth Controller', () => {
         token: 'newAccessToken',
         refreshToken: 'newRefreshToken',
       });
+    });
+
+    it('should return 500 if there is an internal server error', async () => {
+      req.body = { refreshToken: 'validRefreshToken' };
+      tokenModel.getToken.mockRejectedValue(new Error('Database error'));
+      await refreshToken(req, res);
+      expect(res.status).toHaveBeenCalledWith(500);
+      expect(res.send).toHaveBeenCalledWith('Internal server error');
     });
   });
 
